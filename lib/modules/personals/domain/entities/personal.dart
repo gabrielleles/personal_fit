@@ -8,7 +8,7 @@ class Personal {
   final String state;
   final String photoUrl;
   final String whatsapp;
-  final int price;
+  final double price;
 
   Personal({
     required this.id,

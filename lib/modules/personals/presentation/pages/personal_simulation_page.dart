@@ -31,15 +31,18 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
         personalId: widget.personal.id,
         modality: modality,
         frequency: frequency,
-        userName: 'Usuário Teste', // pode ser input do usuário
+        userName: 'Usuário Teste', // aqui pode vir do input do usuário
         estimatedPrice: estimatedPrice,
       );
 
       if (success) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Interesse enviado com sucesso!')),
         );
+        Navigator.pop(context); // volta para detalhes ou catálogo após envio
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erro ao enviar interesse.')),
         );
@@ -60,10 +63,11 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Personal: ${widget.personal.name}', style: Theme.of(context).textTheme.titleLarge),
+              Text('Personal: ${widget.personal.name}',
+                  style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 20),
               Text('Modalidade:', style: Theme.of(context).textTheme.titleMedium),
-              DropdownButton<String>(
+              DropdownButtonFormField<String>(
                 value: modality,
                 items: const [
                   DropdownMenuItem(value: 'online', child: Text('Online')),
@@ -74,10 +78,11 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
                     modality = value!;
                   });
                 },
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
               Text('Frequência:', style: Theme.of(context).textTheme.titleMedium),
-              DropdownButton<String>(
+              DropdownButtonFormField<String>(
                 value: frequency,
                 items: const [
                   DropdownMenuItem(value: '1x', child: Text('1x por semana')),
@@ -89,14 +94,19 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
                     frequency = value!;
                   });
                 },
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
-              Text('Preço estimado: R\$ ${calculateEstimatedPrice().toStringAsFixed(2)}'),
+              Text('Preço estimado: R\$ ${calculateEstimatedPrice().toStringAsFixed(2)}',
+                  style: Theme.of(context).textTheme.titleMedium),
               const Spacer(),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.send),
-                label: const Text('Confirmar Contratação'),
-                onPressed: _confirmHire,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.send),
+                  label: const Text('Confirmar Contratação'),
+                  onPressed: _confirmHire,
+                ),
               ),
             ],
           ),
