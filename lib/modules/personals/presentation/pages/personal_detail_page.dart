@@ -87,11 +87,12 @@ class PersonalDetailPage extends StatelessWidget {
                 Navigator.pushNamed(
                   context,
                   '/simulation',
-                  arguments: personal,
+                  arguments: personal,  // personal deve ser do tipo Personal e não nulo
                 );
               },
               child: const Text('Simular contratação'),
             ),
+
           ],
         ),
       ),

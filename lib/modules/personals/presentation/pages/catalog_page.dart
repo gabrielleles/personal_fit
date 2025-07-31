@@ -1,89 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../providers/personal_provider.dart';
-import 'personal_detail_page.dart';
+import '../../../../core/routes.dart';
+import '../../presentation/providers/personal_provider.dart';
 
 class CatalogPage extends StatefulWidget {
-  const CatalogPage({super.key});
+  const CatalogPage({Key? key}) : super(key: key);
 
   @override
   State<CatalogPage> createState() => _CatalogPageState();
 }
 
 class _CatalogPageState extends State<CatalogPage> {
+  bool _isInit = true;
+
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
       final provider = Provider.of<PersonalProvider>(context, listen: false);
       provider.fetchPersonals();
-    });
+      _isInit = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de Personal Trainers'),
+        title: const Text('Catálogo de Personais'),
       ),
       body: Consumer<PersonalProvider>(
         builder: (context, provider, _) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final specialties = provider.allSpecialties;
+
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Campo de busca
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: TextField(
+                  onChanged: provider.updateSearch,
                   decoration: const InputDecoration(
+                    labelText: 'Buscar por nome',
                     prefixIcon: Icon(Icons.search),
-                    hintText: 'Buscar por nome',
                     border: OutlineInputBorder(),
                   ),
-                  onChanged: (value) => provider.updateSearch(value),
                 ),
               ),
+
+              // Título das especialidades
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text(
+                  'Especialidades:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+
+              // Filtros por especialidade
               SizedBox(
-                height: 40,
-                child: ListView(
+                height: 50,
+                child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  children: provider.allSpecialties.map((specialty) {
-                    final isSelected =
-                    provider.selectedSpecialties.contains(specialty);
+                  itemCount: specialties.length,
+                  itemBuilder: (context, index) {
+                    final specialty = specialties[index];
+                    final isSelected = provider.selectedSpecialties.contains(specialty);
+
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: ChoiceChip(
                         label: Text(specialty),
                         selected: isSelected,
-                        onSelected: (_) {
-                          provider.toggleSpecialtyFilter(specialty);
-                        },
+                        onSelected: (_) => provider.toggleSpecialtyFilter(specialty),
                       ),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
+
+              const SizedBox(height: 10),
+
+              // Lista de cards
               Expanded(
-                child: provider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : provider.filteredPersonals.isEmpty
-                    ? const Center(
-                  child: Text('Nenhum personal encontrado'),
-                )
+                child: provider.filteredPersonals.isEmpty
+                    ? const Center(child: Text('Nenhum personal encontrado.'))
                     : ListView.builder(
                   itemCount: provider.filteredPersonals.length,
                   itemBuilder: (context, index) {
                     final personal = provider.filteredPersonals[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  PersonalDetailPage(personal: personal),
-                            ),
+                            AppRoutes.detail,
+                            arguments: personal,
                           );
                         },
                         child: Padding(
@@ -91,20 +112,19 @@ class _CatalogPageState extends State<CatalogPage> {
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundImage:
-                                NetworkImage(personal.photoUrl),
+                                backgroundImage: NetworkImage(personal.photoUrl),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       personal.name,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                     Row(
                                       children: [
@@ -118,7 +138,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                       ],
                                     ),
                                     Text(
-                                      personal.specialties.join(', '),
+                                      'Especialidades: ${personal.specialties.join(', ')}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
