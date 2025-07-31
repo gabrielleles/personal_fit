@@ -29,9 +29,11 @@ class PersonalDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: NetworkImage(personal.photoUrl),
+            Center(
+              child: CircleAvatar(
+                radius: 60,
+                backgroundImage: NetworkImage(personal.photoUrl),
+              ),
             ),
             const SizedBox(height: 16),
             Center(
@@ -52,50 +54,79 @@ class PersonalDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              personal.bio,
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Especialidades: ${personal.specialties.join(', ')}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Localização: ${personal.city}, ${personal.state}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Preço médio por sessão: R\$ ${personal.price.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _openWhatsApp(context),
-              icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white),
-              label: const Text('Entrar em contato'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                personal.bio,
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,  // Centralizado agora
               ),
             ),
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/simulation',
-                  arguments: personal,  // personal deve ser do tipo Personal e não nulo
-                );
-              },
-              child: const Text('Simular contratação'),
+            Center(
+              child: Text(
+                'Especialidades: ${personal.specialties.join(', ')}',
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
             ),
-
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                'Localização: ${personal.city}, ${personal.state}',
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                'Preço médio por sessão: R\$ ${personal.price.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+            Center(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 220,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _openWhatsApp(context),
+                      icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 18),
+                      label: const Text('Entrar em contato'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: 220,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/simulation',
+                          arguments: personal,
+                        );
+                      },
+                      child: const Text('Simular contratação'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
