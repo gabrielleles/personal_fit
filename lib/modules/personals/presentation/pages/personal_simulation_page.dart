@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/personal.dart';
+import '../../../../core/routes.dart';  // Importa as rotas para usar AppRoutes.catalog
 
 class PersonalSimulationPage extends StatefulWidget {
   final Personal personal;
@@ -29,7 +30,13 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.popUntil(context, ModalRoute.withName('/')),
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.catalog,
+                    (route) => false,
+              );
+            },
             child: const Text('OK'),
           ),
         ],
@@ -48,10 +55,11 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Personal: ${widget.personal.name}',
-                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              'Personal: ${widget.personal.name}',
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 24),
-
             Text('Escolha a modalidade', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
@@ -68,7 +76,6 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
               ),
             ),
             const SizedBox(height: 24),
-
             Text('Frequência por semana', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             DropdownButtonFormField<int>(
@@ -86,12 +93,10 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
               ),
             ),
             const SizedBox(height: 24),
-
             Text(
               'Valor estimado: R\$ ${estimatedPrice.toStringAsFixed(2)} / mês',
               style: theme.textTheme.titleLarge?.copyWith(color: Colors.blueAccent),
             ),
-
             const Spacer(),
             SizedBox(
               width: double.infinity,
