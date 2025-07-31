@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/personal.dart';
+import '../../../../shared/widgets/personal_avatar.dart'; // import do PersonalAvatar
 
 class PersonalDetailPage extends StatelessWidget {
   final Personal personal;
@@ -30,10 +31,7 @@ class PersonalDetailPage extends StatelessWidget {
         child: ListView(
           children: [
             Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(personal.photoUrl),
-              ),
+              child: PersonalAvatar(photoUrl: personal.photoUrl, radius: 60), // substitui CircleAvatar
             ),
             const SizedBox(height: 16),
             Center(
@@ -59,7 +57,7 @@ class PersonalDetailPage extends StatelessWidget {
               child: Text(
                 personal.bio,
                 style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,  // Centralizado agora
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 12),
@@ -129,4 +127,3 @@ class PersonalDetailPage extends StatelessWidget {
     );
   }
 }
-

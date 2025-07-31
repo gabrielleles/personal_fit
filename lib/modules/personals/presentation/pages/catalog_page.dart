@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/routes.dart';
 import '../../presentation/providers/personal_provider.dart';
+import '../../../../shared/widgets/personal_avatar.dart';  // import do PersonalAvatar
 
 class CatalogPage extends StatefulWidget {
   const CatalogPage({Key? key}) : super(key: key);
@@ -111,9 +112,7 @@ class _CatalogPageState extends State<CatalogPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(personal.photoUrl),
-                              ),
+                              PersonalAvatar(photoUrl: personal.photoUrl, radius: 24), // aqui o avatar
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
