@@ -1,4 +1,6 @@
 class SimulationService {
+  /// Simula o envio do interesse de contratação.
+  /// Sempre retorna true após 2 segundos para simular sucesso.
   static Future<bool> sendSimulationInterest({
     required String personalId,
     required String modality,
@@ -6,14 +8,10 @@ class SimulationService {
     required String userName,
     required double estimatedPrice,
   }) async {
-    // Aqui você pode implementar envio real para backend ou Firebase.
-    await Future.delayed(const Duration(seconds: 1));
-    print('Simulação enviada:');
-    print('Personal: $personalId');
-    print('Modalidade: $modality');
-    print('Frequência: $frequency');
-    print('Usuário: $userName');
-    print('Preço estimado: $estimatedPrice');
+    // Simula uma espera que seria a chamada ao backend
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Retorna sucesso (true)
     return true;
   }
 }

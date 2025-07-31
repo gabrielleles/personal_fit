@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'modules/personals/presentation/providers/personal_provider.dart';
+import 'modules/personals/data/repositories/personal_repository_impl.dart';
 import 'modules/personals/presentation/pages/catalog_page.dart';
 
 void main() {
@@ -10,14 +14,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Catálogo de Personais',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PersonalProvider>(
+          create: (_) => PersonalProvider(repository: PersonalRepositoryImpl()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Personal Fit',
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: const CatalogPage(),
+        //
+        // routes: {
+        //   '/detail': (_) => PersonalDetailPage(),
+        // },
       ),
-      debugShowCheckedModeBanner: false,
-      home: const CatalogPage(),
     );
   }
 }

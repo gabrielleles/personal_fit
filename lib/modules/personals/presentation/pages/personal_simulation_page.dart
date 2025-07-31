@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/personal.dart';
-import '../../data/services/simulation_service.dart';
 
 class PersonalSimulationPage extends StatefulWidget {
   final Personal personal;
@@ -12,104 +11,101 @@ class PersonalSimulationPage extends StatefulWidget {
 }
 
 class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
-  final _formKey = GlobalKey<FormState>();
-  String modality = 'online';
-  String frequency = '1x';
+  String selectedModality = 'Musculação';
+  int selectedFrequency = 1;
 
-  double calculateEstimatedPrice() {
-    int freqNum = int.tryParse(frequency[0]) ?? 1;
-    return (widget.personal.price * freqNum).toDouble();
-  }
+  final modalities = ['Musculação', 'Crossfit', 'Funcional', 'Pilates'];
 
-  Future<void> _confirmHire() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  double get estimatedPrice => widget.personal.price * selectedFrequency;
 
-      final estimatedPrice = calculateEstimatedPrice();
-
-      final success = await SimulationService.sendSimulationInterest(
-        personalId: widget.personal.id,
-        modality: modality,
-        frequency: frequency,
-        userName: 'Usuário Teste', // aqui pode vir do input do usuário
-        estimatedPrice: estimatedPrice,
-      );
-
-      if (success) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Interesse enviado com sucesso!')),
-        );
-        Navigator.pop(context); // volta para detalhes ou catálogo após envio
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao enviar interesse.')),
-        );
-      }
-    }
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Interesse Enviado'),
+        content: Text(
+          'Você demonstrou interesse em contratar ${widget.personal.name}. '
+              'O personal entrará em contato com você em breve!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.popUntil(context, ModalRoute.withName('/')),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Simulação de Contratação'),
-      ),
+      appBar: AppBar(title: const Text('Simulação de Contratação')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Personal: ${widget.personal.name}',
-                  style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 20),
-              Text('Modalidade:', style: Theme.of(context).textTheme.titleMedium),
-              DropdownButtonFormField<String>(
-                value: modality,
-                items: const [
-                  DropdownMenuItem(value: 'online', child: Text('Online')),
-                  DropdownMenuItem(value: 'presencial', child: Text('Presencial')),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    modality = value!;
-                  });
-                },
-                decoration: const InputDecoration(border: OutlineInputBorder()),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Personal: ${widget.personal.name}',
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+
+            Text('Escolha a modalidade', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: selectedModality,
+              items: modalities
+                  .map((mod) => DropdownMenuItem(value: mod, child: Text(mod)))
+                  .toList(),
+              onChanged: (value) {
+                setState(() => selectedModality = value!);
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
               ),
-              const SizedBox(height: 20),
-              Text('Frequência:', style: Theme.of(context).textTheme.titleMedium),
-              DropdownButtonFormField<String>(
-                value: frequency,
-                items: const [
-                  DropdownMenuItem(value: '1x', child: Text('1x por semana')),
-                  DropdownMenuItem(value: '2x', child: Text('2x por semana')),
-                  DropdownMenuItem(value: '3x', child: Text('3x por semana')),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    frequency = value!;
-                  });
-                },
-                decoration: const InputDecoration(border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 24),
+
+            Text('Frequência por semana', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<int>(
+              value: selectedFrequency,
+              items: List.generate(
+                7,
+                    (i) => DropdownMenuItem(value: i + 1, child: Text('${i + 1}x / semana')),
               ),
-              const SizedBox(height: 20),
-              Text('Preço estimado: R\$ ${calculateEstimatedPrice().toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.titleMedium),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.send),
-                  label: const Text('Confirmar Contratação'),
-                  onPressed: _confirmHire,
+              onChanged: (value) {
+                setState(() => selectedFrequency = value!);
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            Text(
+              'Valor estimado: R\$ ${estimatedPrice.toStringAsFixed(2)} / mês',
+              style: theme.textTheme.titleLarge?.copyWith(color: Colors.blueAccent),
+            ),
+
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.send),
+                label: const Text('Enviar Interesse'),
+                onPressed: _showConfirmationDialog,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(fontSize: 16),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
