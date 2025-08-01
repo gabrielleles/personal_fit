@@ -21,8 +21,9 @@ class CatalogPage extends StatelessWidget {
           final personals = provider.filteredPersonals;
           return Column(
             children: [
+              const SizedBox(height: 16),
               CatalogSearchBar(onChanged: provider.updateSearch),
-          CatalogSpecialtyFilter(
+          CatalogSpecialityFilter(
             allSpecialties: provider.allSpecialties,
             selectedSpecialties: provider.selectedSpecialties.toList(),  // <-- converte Set para List
             onSpecialtyToggle: provider.toggleSpecialtyFilter,

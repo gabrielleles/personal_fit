@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CatalogSpecialtyFilter extends StatelessWidget {
+class CatalogSpecialityFilter extends StatelessWidget {
   final List<String> allSpecialties;
   final List<String> selectedSpecialties;
   final Function(String) onSpecialtyToggle;
 
-  const CatalogSpecialtyFilter({
+  const CatalogSpecialityFilter({
     super.key,
     required this.allSpecialties,
     required this.selectedSpecialties,
