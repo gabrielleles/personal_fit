@@ -7,7 +7,6 @@ import 'package:personal_fit/modules/personals/presentation/pages/widgets/simula
 import '../../../../core/routes.dart';
 import '../../domain/entities/personal.dart';
 
-
 class PersonalSimulationPage extends StatefulWidget {
   final Personal personal;
 
@@ -55,6 +54,9 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth < 600 ? 24.0 : screenWidth * 0.2;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Simulação de Contratação'),
@@ -63,9 +65,9 @@ class _PersonalSimulationPageState extends State<PersonalSimulationPage> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 32),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 350),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

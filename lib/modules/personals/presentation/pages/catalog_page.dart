@@ -16,20 +16,30 @@ class CatalogPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
       ),
-      body: Consumer<PersonalProvider>(
-        builder: (context, provider, _) {
-          final personals = provider.filteredPersonals;
-          return Column(
-            children: [
-              const SizedBox(height: 16),
-              CatalogSearchBar(onChanged: provider.updateSearch),
-          CatalogSpecialityFilter(
-            allSpecialties: provider.allSpecialties,
-            selectedSpecialties: provider.selectedSpecialties.toList(),  // <-- converte Set para List
-            onSpecialtyToggle: provider.toggleSpecialtyFilter,
-          ),
-              Expanded(child: CatalogPersonalList(personals: personals)),
-            ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final horizontalPadding = constraints.maxWidth < 600 ? 12.0 : 32.0;
+
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Consumer<PersonalProvider>(
+              builder: (context, provider, _) {
+                final personals = provider.filteredPersonals;
+                return Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    CatalogSearchBar(onChanged: provider.updateSearch),
+                    CatalogSpecialityFilter(
+                      allSpecialties: provider.allSpecialties,
+                      selectedSpecialties: provider.selectedSpecialties.toList(),
+                      onSpecialtyToggle: provider.toggleSpecialtyFilter,
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(child: CatalogPersonalList(personals: personals)),
+                  ],
+                );
+              },
+            ),
           );
         },
       ),
