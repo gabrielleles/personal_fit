@@ -17,7 +17,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PersonalProvider>(
-          create: (_) => PersonalProvider(repository: PersonalRepositoryImpl()),
+          create: (context) {
+            final provider = PersonalProvider(repository: PersonalRepositoryImpl());
+            provider.fetchPersonals(); // ✅ carregando os dados iniciais
+            return provider;
+          },
         ),
       ],
       child: MaterialApp(
